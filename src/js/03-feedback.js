@@ -14,18 +14,23 @@ onFormFulfill();
 
 function onFormFulfill() {
     const formValue = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (formValue !== null) {
     // if (formValue === null) {
-        if (formValue) {
     // return;
-    }
     setFormValueOnLoad(formValue);
+    }
 }
 
-function setFormValueOnLoad({ email, message }) {
-    formEl.elements.email.value = email;
-    formEl.elements.message.value = message;
+function setFormValueOnLoad({ email, message } = {}) {
+    if (email && message) {
+      formEl.elements.email.value = email;
+      formEl.elements.message.value = message;
+    } else {
+        formEl.elements.email.value = '';
+        formEl.elements.message.value = '';
+    }
 }
-
+  
 function onFormInput() {
     const formValue = getFormValue();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formValue));
@@ -39,10 +44,18 @@ function getFormValue() {
 
 function onFormSubmit(evt) {
     evt.preventDefault();
-    const formValue = getFormValue(); 
-    console.log(formValue);
+    const formValue = getFormValue();
+    
+    if (formValue.email && formValue.message) {
+      console.log(formValue);
+      
+      // evt.currentTarget.reset();
+      formEl.reset();
+      localStorage.removeItem(STORAGE_KEY);
+    } else {
+      // Виконується, якщо хоча б одне з полів не заповнено
+      console.log('Будь ласка, заповніть обидва поля');
+    }
+  } 
 
-    // evt.currentTarget.reset();
-    formEl.reset();
-    localStorage.removeItem(STORAGE_KEY);
-}
+ 
